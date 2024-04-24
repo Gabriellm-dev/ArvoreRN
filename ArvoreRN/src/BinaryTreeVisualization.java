@@ -79,25 +79,27 @@ public class BinaryTreeVisualization extends JPanel {
             int treeWidth = getTreeWidth(root) * LEVEL_HEIGHT;
             int treeHeight = getTreeHeight(root) * LEVEL_HEIGHT;
             int startX = (getWidth() - treeWidth) / 2;
-            int startY = (getHeight() - treeHeight) / 2;
-            drawTree(g, startX + treeWidth / 2, startY, root);
+            int startY = (getHeight() - LEVEL_HEIGHT) / 2; // Centraliza verticalmente
+            drawTree(g, startX + treeWidth / 2, startY, root, 0, treeWidth);
         }
     }
 
-    private void drawTree(Graphics g, int x, int y, Node node) {
+    private void drawTree(Graphics g, int x, int y, Node node, int level, int treeWidth) {
         if (node != null) {
             g.setColor(node.getColor() == NodeColor.RED ? Color.RED : Color.BLACK);
             g.fillOval(x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2, NODE_WIDTH, NODE_HEIGHT);
             g.setColor(Color.white);
             g.drawString(String.valueOf(node.getData()), x - 5, y + 5);
 
+            int xOffset = treeWidth / (1 << (level + 1)); // Calcula o espaçamento horizontal entre os nós
+
             if (node.getLeftChild() != null) {
-                drawLine(g, x, y, x - LEVEL_HEIGHT, y + LEVEL_HEIGHT);
-                drawTree(g, x - LEVEL_HEIGHT, y + LEVEL_HEIGHT, node.getLeftChild());
+                drawLine(g, x, y, x - xOffset, y + LEVEL_HEIGHT);
+                drawTree(g, x - xOffset, y + LEVEL_HEIGHT, node.getLeftChild(), level + 1, treeWidth);
             }
             if (node.getRightChild() != null) {
-                drawLine(g, x, y, x + LEVEL_HEIGHT, y + LEVEL_HEIGHT);
-                drawTree(g, x + LEVEL_HEIGHT, y + LEVEL_HEIGHT, node.getRightChild());
+                drawLine(g, x, y, x + xOffset, y + LEVEL_HEIGHT);
+                drawTree(g, x + xOffset, y + LEVEL_HEIGHT, node.getRightChild(), level + 1, treeWidth);
             }
         }
     }
