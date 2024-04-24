@@ -30,7 +30,21 @@ public class BinaryTreeVisualization extends JPanel {
             }
         });
         buttonPanel.add(insertButton);
-        add(buttonPanel, BorderLayout.NORTH);
+
+        JButton removeButton = new JButton("Remover elemento");
+        removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String inputValue = JOptionPane.showInputDialog("Digite o elemento a ser removido:");
+                if (inputValue != null) {
+                    int element = Integer.parseInt(inputValue);
+                    redBlackTree.remove(element);
+                    setRoot(redBlackTree.getRoot());
+                    repaint();
+                }
+            }
+        });
+        buttonPanel.add(removeButton);
 
         JButton heightButton = new JButton("Calcular altura de um nó");
         heightButton.addActionListener(new ActionListener() {
@@ -50,6 +64,8 @@ public class BinaryTreeVisualization extends JPanel {
             }
         });
         buttonPanel.add(heightButton);
+
+        add(buttonPanel, BorderLayout.NORTH);
 
         JLabel spaceLabel = new JLabel();
         spaceLabel.setPreferredSize(new Dimension(1, 100)); // Ajuste a altura conforme necessário

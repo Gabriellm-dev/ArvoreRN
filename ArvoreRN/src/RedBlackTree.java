@@ -170,4 +170,153 @@ public class RedBlackTree implements Tree{
             return Math.max(leftHeight, rightHeight) + 1;
         }
     }
+
+    public void remove(int data) {
+        root = removeNode(root, data);
+        // Após a remoção, é necessário garantir que a raiz seja preta
+        if (root != null) {
+            root.setColor(NodeColor.BLACK);
+        }
+    }
+
+    private Node removeNode(Node node, int data) {
+        // Caso base: se o nó for nulo, retornar nulo
+        if (node == null) {
+            return null;
+        }
+
+        // Buscar o nó a ser removido na subárvore esquerda
+        if (data < node.getData()) {
+            node.setLeftChild(removeNode(node.getLeftChild(), data));
+        }
+        // Buscar o nó a ser removido na subárvore direita
+        else if (data > node.getData()) {
+            node.setRightChild(removeNode(node.getRightChild(), data));
+        }
+        // Nó encontrado, então remover
+        else {
+            // Caso 1: Nó a ser removido tem zero ou um filho
+            if (node.getLeftChild() == null || node.getRightChild() == null) {
+                // Nó temporário para armazenar o filho não nulo (ou null)
+                Node temp = node.getLeftChild() != null ? node.getLeftChild() : node.getRightChild();
+
+                // Caso especial: o nó a ser removido é vermelho
+                if (node.getColor() == NodeColor.RED) {
+                    return temp; // Simplesmente remover o nó
+                } else {
+                    // Caso especial: o nó a ser removido é preto
+                    // e não tem filhos (ou apenas um filho preto)
+                    if (temp != null) {
+                        // Filho não nulo substitui o nó removido
+                        temp.setParent(node.getParent());
+                        temp.setColor(NodeColor.BLACK); // Filho preto substitui nó preto
+                    }
+                    // Retornar o filho (pode ser null)
+                    return temp;
+                }
+            }
+            // Caso 2: Nó a ser removido tem dois filhos
+            else {
+                // Encontrar o nó sucessor (o menor nó na subárvore direita)
+                Node successor = findSuccessor(node.getRightChild());
+                // Substituir o nó a ser removido pelo sucessor
+                node.setData(successor.getData());
+                // Remover o sucessor da subárvore direita
+                node.setRightChild(removeNode(node.getRightChild(), successor.getData()));
+            }
+        }
+
+        // Reequilibrar a árvore
+        return fixAfterDeletion(node);
+    }
+
+
+    private Node fixAfterDeletion(Node node) {
+        // Caso 1: Nó é a raiz (node == root)
+        if (node.getParent() == null) {
+            return node; // Nada a fazer, a árvore permanece balanceada
+        }
+
+        Node sibling = getSibling(node);
+        Node parent = node.getParent();
+
+        // Caso 2: Irmão é vermelho
+        if (sibling != null && sibling.getColor() == NodeColor.RED) {
+            // Realizar rotações e trocar cores para equilibrar a árvore
+            if (isLeftChild(sibling)) {
+                rightRotate(parent);
+            } else {
+                leftRotate(parent);
+            }
+            // Atualizar as referências após a rotação
+            sibling.setColor(NodeColor.BLACK);
+            parent.setColor(NodeColor.RED);
+            sibling = getSibling(node);
+        }
+
+        // Caso 3: Pai, irmão e sobrinhos são pretos
+        if (parent.getColor() == NodeColor.BLACK && (sibling == null || sibling.getColor() == NodeColor.BLACK)) {
+            // Trocar cor do irmão para vermelho
+            if (sibling != null) {
+                sibling.setColor(NodeColor.RED);
+            }
+            // Rebalancear a árvore recursivamente
+            return fixAfterDeletion(parent);
+        }
+
+        // Caso 4: Irmão e sobrinhos são pretos, mas o pai é vermelho
+        if (parent.getColor() == NodeColor.RED && (sibling == null || sibling.getColor() == NodeColor.BLACK)) {
+            // Trocar cores entre pai e irmão
+            parent.setColor(NodeColor.BLACK);
+            if (sibling != null) {
+                sibling.setColor(NodeColor.RED);
+            }
+            // Árvore permanece balanceada
+            return node;
+        }
+
+        // Caso 5: O irmão é preto, mas pelo menos um sobrinho é vermelho
+        if (sibling != null && sibling.getColor() == NodeColor.BLACK) {
+            // Verificar se o sobrinho mais próximo ao nó é vermelho
+            if (isLeftChild(sibling) && (sibling.getRightChild() != null && sibling.getRightChild().getColor() == NodeColor.RED)) {
+                // Rotação à direita no irmão e trocar cores
+                leftRotate(sibling);
+                sibling.setColor(NodeColor.RED);
+                sibling.getParent().setColor(NodeColor.BLACK);
+            } else if (!isLeftChild(sibling) && (sibling.getLeftChild() != null && sibling.getLeftChild().getColor() == NodeColor.RED)) {
+                // Rotação à esquerda no irmão e trocar cores
+                rightRotate(sibling);
+                sibling.setColor(NodeColor.RED);
+                sibling.getParent().setColor(NodeColor.BLACK);
+            }
+        }
+
+        return node;
+    }
+
+    private Node findSuccessor(Node node) {
+        // Encontrar o nó mais à esquerda na subárvore direita
+        while (node.getLeftChild() != null) {
+            node = node.getLeftChild();
+        }
+        return node;
+    }
+
+    private Node getSibling(Node node) {
+        Node parent = node.getParent();
+        // Se não houver pai, não há irmão
+        if (parent == null) {
+            return null;
+        }
+        // Se o nó for filho esquerdo, retorna o irmão direito e vice-versa
+        if (node == parent.getLeftChild()) {
+            return parent.getRightChild();
+        } else {
+            return parent.getLeftChild();
+        }
+    }
+
+    private boolean isLeftChild(Node node) {
+        return node == node.getParent().getLeftChild();
+    }
 }
