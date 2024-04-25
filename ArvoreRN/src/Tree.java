@@ -4,8 +4,12 @@
 public interface Tree {
 
     // Este método é responsável por realizar a travessia da árvore.
-    public void traverse();
+        void traverse();
 
     // Este método é usado para inserir um novo nó na árvore.
-    public void insert(int data);
-}
+        void insert(int data);
+
+        void delete(int data);
+
+        int getHeight(Node node);
+    }

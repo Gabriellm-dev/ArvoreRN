@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class BinaryTreeVisualization extends JPanel {
 
@@ -16,6 +18,7 @@ public class BinaryTreeVisualization extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel buttonPanel = new JPanel();
+
         JButton insertButton = new JButton("Inserir elemento");
         insertButton.addActionListener(new ActionListener() {
             @Override
@@ -31,6 +34,7 @@ public class BinaryTreeVisualization extends JPanel {
         });
         buttonPanel.add(insertButton);
 
+
         JButton removeButton = new JButton("Remover elemento");
         removeButton.addActionListener(new ActionListener() {
             @Override
@@ -38,13 +42,15 @@ public class BinaryTreeVisualization extends JPanel {
                 String inputValue = JOptionPane.showInputDialog("Digite o elemento a ser removido:");
                 if (inputValue != null) {
                     int element = Integer.parseInt(inputValue);
-                    redBlackTree.remove(element);
+                    redBlackTree.delete(element);
                     setRoot(redBlackTree.getRoot());
                     repaint();
                 }
             }
         });
         buttonPanel.add(removeButton);
+
+
 
         JButton heightButton = new JButton("Calcular altura de um nó");
         heightButton.addActionListener(new ActionListener() {
@@ -132,7 +138,27 @@ public class BinaryTreeVisualization extends JPanel {
 
     private int getTreeWidth(Node node) {
         if (node == null) return 0;
-        return 1 + getTreeWidth(node.getLeftChild()) + getTreeWidth(node.getRightChild());
+
+        int width = 1;
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(node);
+
+        while (!queue.isEmpty()) {
+            int levelWidth = queue.size();
+            while (levelWidth-- > 0) {
+                Node current = queue.poll();
+                if (current.getLeftChild() != null) {
+                    queue.offer(current.getLeftChild());
+                    width++;
+                }
+                if (current.getRightChild() != null) {
+                    queue.offer(current.getRightChild());
+                    width++;
+                }
+            }
+        }
+
+        return width;
     }
 
     private int getTreeHeight(Node node) {
