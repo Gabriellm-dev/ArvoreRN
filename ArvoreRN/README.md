@@ -39,9 +39,21 @@ Uma árvore rubro negra é um tipo de árvore binária de busca balanceada, uma 
         - O objetivo é mover o filho esquerdo para a posição do pai e fazer o pai se tornar o filho direito do filho esquerdo.
         - Essa rotação é aplicada para manter a árvore balanceada e preservar as propriedades da árvore rubro-negra.
 ### Remoção de um elemento
+    - A remoção de um elemento de uma árvore rubro-negra segue um processo complexo para garantir que as propriedades da árvore sejam mantidas. Aqui estão os passos principais:
+    - Encontrar o nó a ser removido.
+    - Se o nó tiver zero ou um filho, remova-o diretamente.
+    - Se o nó tiver dois filhos, encontre o sucessor in-order (o nó mais à esquerda da subárvore direita) ou o predecessor in-order (o nó mais à direita da subárvore esquerda). Copie o valor do sucessor ou predecessor para o nó a ser removido e remova o sucessor ou predecessor em vez do nó original.
+    - Após a remoção, verifique se as propriedades da árvore rubro-negra são violadas e faça as correções necessárias, como ajustes de cor e rotações.
 
 ### Altura de um nó 
     - Verificação do nó nulo: Verifica se o nó passado como argumento é nulo. Se for, retorna -1.
     - Cálculo da altura: Utiliza um método privado recursivo para calcular a altura da subárvore a partir do nó dado.
     - Retorno da altura: Retorna a altura calculada, que é o máximo entre as alturas das subárvores esquerda e direita, mais 1.
+
 ## Instruções para compilação e execução.
+    - Para compilar e executar o projeto, siga estas etapas:
+        1. Certifique-se de ter o JDK (Java Development Kit) instalado em seu sistema.
+        2. Baixe todos os arquivos fonte do projeto em uma pasta.
+        3. Abra um terminal ou prompt de comando e navegue até o diretório onde os arquivos do projeto estão localizados.
+        4. Compile os arquivos Java digitando o seguinte comando: ( javac *.java )  - Isso compilará todos os arquivos Java presentes no diretório.
+        5. Após a compilação bem-sucedida, você pode executar o programa usando o seguinte comando: (java Main).
